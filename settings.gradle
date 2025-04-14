@@ -1,0 +1,4 @@
+rootProject.name = "AQI Monitor"
+include ':app'
+include ':automotive'
+include ':shared' 
