@@ -29,3 +29,18 @@ An Android application that displays Air Quality Index (AQI) data on both mobile
 This project supports both standard Android devices and Android Automotive. The same codebase is used for both platforms with platform-specific UI adjustments.
 
 For testing Android Auto features, you'll need to use the Desktop Head Unit (DHU) simulator included with Android Studio.
+
+
+Android SDK location
+
+`/Users/rahul/Library/Android/sdk/extras/google/auto`
+
+how to run the DHU
+
+`./desktop-head-unit --usb`
+
+Restart DHU with proper forwarding:
+```
+/Users/rahul/Library/Android/sdk/platform-tools/adb forward tcp:5277 tcp:5277
+/Users/rahul/Library/Android/sdk/extras/google/auto/desktop-head-unit
+```

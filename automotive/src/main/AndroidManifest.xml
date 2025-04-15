@@ -17,6 +17,10 @@
         android:theme="@style/Theme.AQIMonitor">
 
         <meta-data android:name="com.android.automotive" android:resource="@xml/automotive_app_desc" />
+        
+        <meta-data
+            android:name="androidx.car.app.minCarApiLevel"
+            android:value="1" />
 
         <activity
             android:name=".MainActivity"
@@ -24,8 +28,18 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.CAR_DOCK" />
             </intent-filter>
         </activity>
+        
+        <service
+            android:name=".AqiCarAppService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="androidx.car.app.CarAppService" />
+                <category android:name="androidx.car.app.category.TEMPLATED" />
+            </intent-filter>
+        </service>
 
     </application>
 </manifest> 

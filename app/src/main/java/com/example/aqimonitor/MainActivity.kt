@@ -3,6 +3,7 @@ package com.example.aqimonitor
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.aqimonitor.databinding.ActivityMainBinding
 import kotlin.random.Random
@@ -16,11 +17,15 @@ class MainActivity : AppCompatActivity() {
             handler.postDelayed(this, 5000) // Update every 5 seconds
         }
     }
+    private val appVersion = "1.0.1" // Version number
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Display version
+        binding.versionText.text = "v$appVersion"
 
         // Start updating AQI value
         updateAQIValue()

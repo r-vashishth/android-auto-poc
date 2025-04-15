@@ -16,11 +16,15 @@ class MainActivity : AppCompatActivity() {
             handler.postDelayed(this, 5000) // Update every 5 seconds
         }
     }
+    private val appVersion = "1.0.1" // Version number
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Display version
+        binding.versionText.text = "v$appVersion (Automotive)"
 
         // Start updating AQI value
         updateAQIValue()
