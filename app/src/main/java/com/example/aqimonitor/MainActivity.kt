@@ -1,22 +1,15 @@
 package com.example.aqimonitor
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.aqimonitor.shared.bluetooth.BluetoothAqiReader
 import com.example.aqimonitor.databinding.ActivityMainBinding
-import kotlin.random.Random
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val handler = Handler(Looper.getMainLooper())
-    private val updateRunnable = object : Runnable {
-        override fun run() {
-            updateAQIValue()
-            handler.postDelayed(this, 5000) // Update every 5 seconds
-        }
-    }
+    private lateinit var bluetoothAqiReader: BluetoothAqiReader
     private val appVersion = "1.0.1" // Version number
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,22 +20,25 @@ class MainActivity : AppCompatActivity() {
         // Display version
         binding.versionText.text = "v$appVersion"
 
-        // Start updating AQI value
-        updateAQIValue()
-        handler.post(updateRunnable)
+        bluetoothAqiReader = BluetoothAqiReader(this)
+
+        lifecycleScope.launch {
+            bluetoothAqiReader.aqiFlow.collect { data ->
+                data?.let { updateAQIValue(it.value) }
+            }
+        }
     }
 
-    private fun updateAQIValue() {
-        val randomAQI = Random.nextInt(0, 500)
-        binding.aqiValue.text = randomAQI.toString()
-        
+    private fun updateAQIValue(value: Int) {
+        binding.aqiValue.text = value.toString()
+
         // Update circle color based on AQI value
         val color = when {
-            randomAQI <= 50 -> getColor(R.color.good)
-            randomAQI <= 100 -> getColor(R.color.moderate)
-            randomAQI <= 150 -> getColor(R.color.unhealthy_sensitive)
-            randomAQI <= 200 -> getColor(R.color.unhealthy)
-            randomAQI <= 300 -> getColor(R.color.very_unhealthy)
+            value <= 50 -> getColor(R.color.good)
+            value <= 100 -> getColor(R.color.moderate)
+            value <= 150 -> getColor(R.color.unhealthy_sensitive)
+            value <= 200 -> getColor(R.color.unhealthy)
+            value <= 300 -> getColor(R.color.very_unhealthy)
             else -> getColor(R.color.hazardous)
         }
         binding.aqiCircle.setCardBackgroundColor(color)
@@ -50,6 +46,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacks(updateRunnable)
+        bluetoothAqiReader.stop()
     }
-} 
+
+    override fun onStart() {
+        super.onStart()
+        bluetoothAqiReader.start()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        bluetoothAqiReader.stop()
+    }
+}
